@@ -10,6 +10,8 @@ Este trabalho será divido em duas partes:
 - Coleta dos dados de filmes disponíveis no site IMDB.
 - Construção do modelo de recomendação baseado em conteúdo.
 
+Após a construção do modelo incial será desenvolvida uma api para consumo público.
+
 ## Desenvolvimento
 
 ## Conclusões
