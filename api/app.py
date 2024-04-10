@@ -28,6 +28,8 @@ def search_movies():
     req_title = str(request.args.get('title', ''))
 
     s_movies = movies.loc[movies.primaryTitle_ptBr.str.lower().str.contains(req_title)]
+    s_movies =  s_movies.sort_values('startYear', ascending=False)
+
     return Response(s_movies.to_json(orient="records"), mimetype='application/json')
 
 @app.route('/recomend', methods=['GET'])

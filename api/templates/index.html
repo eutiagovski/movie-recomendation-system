@@ -161,7 +161,7 @@
 
       const ListRecomendations = ({ recomendations }) => {
         return (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, my: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, my: 2, overflow:'auto' }}>
             {recomendations.map((movie, i) => (
               <Box sx={{ display: "flex", gap: 2 }} key={i}>
                 <img src={movie.image_url} />
