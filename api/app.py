@@ -1,4 +1,3 @@
-from flask import Blueprint
 from flask import request
 import pandas as pd
 import joblib
@@ -8,7 +7,6 @@ from flask_cors import CORS
 
 movies, cousine_sim = joblib.load('../models/model_v1.joblib')
 
-# bp = Blueprint("pages", __name__)
 app = Flask(__name__)
 CORS(app)
 
@@ -28,7 +26,7 @@ def about():
 @app.route('/search', methods=['GET'])
 def search_movies():
     req_title = str(request.args.get('title', ''))
-    print(req_title)
+
     s_movies = movies.loc[movies.primaryTitle_ptBr.str.lower().str.contains(req_title)]
     return Response(s_movies.to_json(orient="records"), mimetype='application/json')
 
