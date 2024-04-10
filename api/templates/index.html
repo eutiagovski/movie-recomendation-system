@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Recomenda Filmes</title>
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <script
+      src="https://unpkg.com/react@latest/umd/react.development.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/react-dom@latest/umd/react-dom.development.js"></script>
+    <script
+      src="https://unpkg.com/@mui/material@latest/umd/material-ui.development.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@latest/babel.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Fonts to support Material Design -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+    />
+    <!-- Icons to support Material Design -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const {
+        colors,
+        CssBaseline,
+        ThemeProvider,
+        Typography,
+        Container,
+        createTheme,
+        Box,
+        SvgIcon,
+        Link,
+        Autocomplete,
+        TextField,
+      } = MaterialUI;
+      const { useState } = React;
+
+      // Create a theme instance.
+      const theme = createTheme({
+        palette: {
+          primary: {
+            main: "#556cd6",
+          },
+          secondary: {
+            main: "#19857b",
+          },
+          error: {
+            main: colors.red.A400,
+          },
+        },
+      });
+
+      function LightBulbIcon(props) {
+        return (
+          <SvgIcon {...props}>
+            <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z" />
+          </SvgIcon>
+        );
+      }
+
+      function ProTip() {
+        return (
+          <Typography sx={{ mt: 6, mb: 3, color: "text.secondary" }}>
+            <LightBulbIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+            {"Pro tip: See more "}
+            <Link href="https://mui.com/material-ui/getting-started/templates/">
+              templates
+            </Link>
+            {" in the Material UI documentation."}
+          </Typography>
+        );
+      }
+
+      function Copyright() {
+        return (
+          <Typography variant="body2" color="text.secondary" align="center">
+            {"Copyright © "}
+            <Link color="inherit" href="https://mui.com/">
+              Future Machines
+            </Link>{" "}
+            {new Date().getFullYear()}
+            {"."}
+          </Typography>
+        );
+      }
+
+      function SearchMovie({ setRecomendations }) {
+        const [allMovies, setAllMovies] = useState([]);
+        const [selectedValue, setSelectedValue] = useState();
+
+        const handleChange = (e) => {
+            const {value} = e.target;
+
+          if (value.length >= 3) {
+            return axios
+              .get(`http://localhost:5000/search?title=${value.toLowerCase()}`)
+              .then((response) => {
+                setAllMovies(response.data);
+              });
+          }
+          setAllMovies([]);
+        };
+
+        const handleSelect = (event, value) => {
+          if (value) {
+            return axios
+              .get(`http://localhost:5000/recomend?tconst=${value.tconst}`)
+              .then((response) => {
+                setRecomendations(response.data);
+              });
+          }
+          setRecomendations([]);
+        };
+
+        return (
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={allMovies}
+            onChange={handleSelect}
+            getOptionLabel={(option) => option.primaryTitle_ptBr}
+            sx={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Escolha um filme" onChange={handleChange} />
+            )}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                {...props}
+              >
+                <img
+                  loading="lazy"
+                  //   width="20"
+                  //   srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                  //   src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                  src={option.image_url}
+                  srcSet={`${option.image_url} 2x`}
+                  alt=""
+                />
+                {option.primaryTitle_ptBr} ({option.startYear})
+              </Box>
+            )}
+          />
+        );
+      }
+
+      const ListRecomendations = ({ recomendations }) => {
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, my: 2, overflow:'auto' }}>
+            {recomendations.map((movie, i) => (
+              <Box sx={{ display: "flex", gap: 2 }} key={i}>
+                <img src={movie.image_url} />
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}
+                >
+                  <Typography>
+                    {movie.primaryTitle_ptBr} ({movie.startYear})
+                  </Typography>
+                  <Typography>{movie.overview}</Typography>
+                  <Typography>Score: {movie.score}</Typography>
+                  <Typography>Qtd Votos: {movie.numVotes}</Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        );
+      };
+
+      function App() {
+        const [recomendations, setRecomendations] = useState([]);
+        return (
+          <Container maxWidth="md">
+            <Box sx={{ my: 4 }}>
+              <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+                Recomendação de Filmes
+              </Typography>
+              <SearchMovie setRecomendations={setRecomendations} />
+              <ListRecomendations recomendations={recomendations} />
+              <ProTip />
+              <Copyright />
+            </Box>
+          </Container>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(
+        <ThemeProvider theme={theme}>
+          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+          <CssBaseline />
+          <App />
+        </ThemeProvider>
+      );
+    </script>
+  </body>
+</html>
