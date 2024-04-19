@@ -6,19 +6,21 @@ https://moviesway.streamlit.app/
 https://github.com/vikramr22/moviesway-v2/blob/main/app.py
 
 """
+import os
+import wget
 import pandas as pd
-from numpy import load
 import streamlit as st
+from numpy import load
 
-DATA_MOVIES_URL = './data/movies.tsv'
-DATA_COUSINE_SIM_URL = './data/cousine_sim.npz'
+DATA_MOVIES_URL = 'https://raw.githubusercontent.com/eutiagovski/movie-recomendation-system/master/data/movies.tsv'
+DATA_COUSINE_SIM_URL = 'https://github.com/eutiagovski/movie-recomendation-system/raw/master/data/cousine_sim.npz'
 
 ##### BACKEND #####
 @st.cache_resource
 class MovieRecomendation:
-    def __init__(self):
-        self.movies = pd.read_csv(DATA_MOVIES_URL, sep='\t')
-        self.cousine_sim = load('./data/cousine_sim.npz')['arr_0']
+    def __init__(self, movies, cousine_sim):
+        self.movies = movies
+        self.cousine_sim = cousine_sim
         self.titles = dict(zip(self.movies.tconst, self.movies.primaryTitle_ptBr))
 
     def searchMovies(self, primaryTitle):
@@ -51,6 +53,22 @@ class MovieRecomendation:
         return movies
 
 
+@st.cache_resource
+def get_data_from_github():
+    try:
+        movies = pd.read_csv('./data/movies.tsv', sep='\t')
+    except:
+        wget.download(DATA_MOVIES_URL, f'{os.path.abspath(os.getcwd())}/data')
+        movies = pd.read_csv('./data/movies.tsv', sep='\t')
+
+    try:
+        cousine_sim = load('./data/cousine_sim.npz')['arr_0']        
+    except: 
+        wget.download(DATA_COUSINE_SIM_URL, f'{os.path.abspath(os.getcwd())}/data')
+        cousine_sim = load('./data/cousine_sim.npz')['arr_0']        
+
+    return movies, cousine_sim
+
 ##### FRONT END #####
 
 # initial page configuration
@@ -60,15 +78,17 @@ st.set_page_config(layout="wide",
 
 
 with st.columns([0.10, 0.8, 0.10])[1]:
+    data_load_state = st.text("Loading movies dataset...")
+    try:
+        print(model)
+    except:
+        movies, cousine_sim = get_data_from_github()
+        model = MovieRecomendation(movies, cousine_sim)
+    data_load_state.text("")
 
-    # page title
+    # start code
     v = st.write(""" <h1> <b style="color:red">🎬 Recomenda Ae</b> </h1>""",unsafe_allow_html=True)
     st.write(""" <p> Olá, bem vindo ao <b style="color:red">Recomenda Ae</b>. Sistema de recomendação de filmes e séries de tv baseado em conteúdo.""",unsafe_allow_html=True)
-
-    # load the dataset and the model
-    data_load_state = st.text("Loading movies dataset...")
-    model = MovieRecomendation()
-    data_load_state.text("")
 
     tab1, tab2, tab3 = st.tabs(["Recomendação", "Mais Procurados", "Sobre o Projeto"])
     st.write('#')
@@ -81,7 +101,7 @@ with st.columns([0.10, 0.8, 0.10])[1]:
                                         format_func=lambda t: model.titles[t])
 
         if selected_movie:
-            # st.write('######')
+            st.write('######')
             st.subheader("Aqui estão alguns outros filmes que você possa gostar:")
             st.write('######')
 
