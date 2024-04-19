@@ -76,14 +76,17 @@ st.set_page_config(layout="wide",
                    page_title='Recomenda Ae',
                    page_icon='🎬')
 
-data_load_state = st.text("Loading movies dataset...")
-
-movies, cousine_sim = get_data_from_github()
-model = MovieRecomendation(movies, cousine_sim)
-
-data_load_state.text("")
 
 with st.columns([0.10, 0.8, 0.10])[1]:
+    data_load_state = st.text("Loading movies dataset...")
+    try:
+        print(model)
+    except:
+        movies, cousine_sim = get_data_from_github()
+        model = MovieRecomendation(movies, cousine_sim)
+    data_load_state.text("")
+
+    # start code
     v = st.write(""" <h1> <b style="color:red">🎬 Recomenda Ae</b> </h1>""",unsafe_allow_html=True)
     st.write(""" <p> Olá, bem vindo ao <b style="color:red">Recomenda Ae</b>. Sistema de recomendação de filmes e séries de tv baseado em conteúdo.""",unsafe_allow_html=True)
 
