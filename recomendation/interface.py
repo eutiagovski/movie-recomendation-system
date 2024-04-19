@@ -90,7 +90,6 @@ with st.columns([0.10, 0.8, 0.10])[1]:
             with st.container():
                 for index, title in recomended_titles.iterrows():
                     col1, col2 = st.columns([0.20, 0.80])
-                    # col1.image(title.image_url)
                     col1.write(f"""<div style="display: flex; justify-content:center;"><img src={title.image_url} /></div>""",unsafe_allow_html=True)
                     col2.write(f' <h4> {title.primaryTitle_ptBr} </h4>',unsafe_allow_html=True)
                     col2.write(f"""<p> {'Filme' if title.titleType == 'movie' else 'Série de TV'} - {title.startYear} - Score: {round(title.score, 2)} - IMDB: {round(title.averageRating, 2)}</p>""",unsafe_allow_html=True)
