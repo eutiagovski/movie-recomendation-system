@@ -45,10 +45,18 @@ O desenvolvimento deste trabalho está detalhado nos noeteboks que seguem:
 
 ## Conclusões
 
+O primeiro desafio deste projeto foi realizar a coleta dos dados do site IMDB. Como o site possui muitos títulos, foi necessário definir critérios de filtros (como buscar somente filmes com notas maiores que 5 e quantidade de votos maior que a média). Além disso, tivemos que dividir a coleta em etapas (por nota) para garantir o perfeito funcionamento do script.
+
+Outro problema enfrentado foi calcular a similaridade dos itens. Mesmo tendo filtrado inicialmente filmes com as melhores notas, optamos por manter a recomendação para filmes que estão no 90 percentile (calculado pela média ponderada do IMDB entre avaliação e quantidade de votos), de forma a otimizar o tempo gasto no cálculo das similaridades e otimizar espaço na memória do programa (e também reduzir o tamanho da matriz de similaridade, pois o github aceita arquivos com no máximo 100mb).
+
+No geral, com este projeto aprendemos algumas técnicas de redução de dimensionalidade, e também aprendemos a utilizar o framework Streamlit.
+
+Com a base já consolidada, será possível a atualização mensal dos títulos, tornando a experiência ainda melhor para o usuário final.
+
 ## Próximos Passos
 
-- Integrar as notas dos usuários do <a href=''>Adoro Cinema</a> no aplicativo para uma experiência ainda mais "abrasileirada".
+- Integrar as notas dos usuários do <a href='https://www.adorocinema.com/'>Adoro Cinema</a> no aplicativo para uma experiência ainda mais "abrasileirada".
 
 ## Críticas e Sugestões
 
-Se você deseja fazer alguma crítica ou sugestão ao projeto, entre em contato comigo diretamente pelo meu <a href='https://www.linkedin.com/in/tiagomachadodev'>Linkedin</a>
+Se você deseja fazer alguma crítica ou sugestão ao projeto, entre em contato comigo diretamente pelo meu <a href='https://www.linkedin.com/in/tiagomachadodev'>Linkedin</a>.
