@@ -1,14 +1,10 @@
 import pandas as pd
-import joblib
-import glob
-
-version = len(glob.glob('./models/**.joblib'))
-movies, cousine_sim = joblib.load(f'./models/model_v{version}.joblib')
 
 class MovieRecomendation:
-    def __init__(self):
+    def __init__(self, movies, cousine_sim):
         self.movies = movies
         self.cousine_sim = cousine_sim
+        self.titles = dict(zip(self.movies.tconst, self.movies.primaryTitle_ptBr))
 
     def searchMovies(self, primaryTitle):
         """Return movies titles with the given input"""
